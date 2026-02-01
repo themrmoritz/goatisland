@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goat Island Pro Planner</title>
+    <title>Goat Island Pro</title>
     <style>
         :root {
             --bg: #f0f4f8;
@@ -130,13 +130,13 @@
         /* LOADING & ERROR */
         #loading { text-align: center; padding: 40px; color: var(--subtext); }
         .hidden { display: none; }
+        .error-box { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-family: monospace; font-size: 0.9em; }
 
         /* COLOR UTILITIES */
         .bg-good { background-color: var(--good); }
-        .bg-ok { background-color: var(--ok); color: #744210; } /* Darker text for contrast */
+        .bg-ok { background-color: var(--ok); color: #744210; }
         .bg-bad { background-color: var(--bad); }
         
-        /* ONSHORE WIND WARNING */
         .warning-text { color: #e53e3e; font-size: 0.8rem; font-weight: bold; margin-top: 5px; display: block; }
 
     </style>
@@ -149,101 +149,112 @@
         <div class="subtitle">7-Day Snorkel Forecaster</div>
     </header>
 
+    <div id="debug-area"></div>
     <div id="loading">Scanning satellites...</div>
     <div id="app"></div>
 </div>
 
 <script>
-    // --- CONFIGURATION ---
+    // --- 1. CRASH REPORTER (Debug Tool) ---
+    // This catches any error and prints it to the screen so you can see it on mobile/GitHub
+    window.onerror = function(message, source, lineno, colno, error) {
+        const debug = document.getElementById('debug-area');
+        debug.innerHTML = `
+            <div class="error-box">
+                <strong>⚠️ App Crash Detected:</strong><br/>
+                ${message}<br/>
+                <small>Line: ${lineno}</small>
+            </div>
+        `;
+        document.getElementById('loading').classList.add('hidden');
+    };
+
+    // --- 2. CONFIGURATION ---
     const CONFIG = {
         lat: -36.27, // Goat Island Marine Reserve
         lon: 174.80,
         timezone: "Pacific/Auckland",
-        // Goat Island Specifics:
-        onshoreWinds: ['N', 'NE', 'NW'], // Bad for viz
-        offshoreWinds: ['S', 'SW', 'SE'], // Good for viz (flat water)
-        maxSwell: 1.0, // Meters
+        onshoreWinds: ['N', 'NE', 'NW'], 
+        offshoreWinds: ['S', 'SW', 'SE'],
+        maxSwell: 1.0, 
     };
 
-    // --- LOGIC ENGINE ---
-
-    // 1. Convert Degrees to Compass (N, NE, etc.)
+    // --- 3. HELPER FUNCTIONS ---
     function getCardinal(angle) {
         const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
         return directions[Math.round(angle / 45) % 8];
     }
 
-    // 2. Calculate Reliability (Decays over time)
     function getConfidence(daysAway) {
-        // 100% today, -10% per day, min 20%
         const score = Math.max(20, 100 - (daysAway * 12)); 
-        let color = '#48bb78'; // Green
-        if(score < 75) color = '#ecc94b'; // Yellow
-        if(score < 50) color = '#cbd5e0'; // Grey
+        let color = '#48bb78'; 
+        if(score < 75) color = '#ecc94b'; 
+        if(score < 50) color = '#cbd5e0'; 
         return { score, color };
     }
 
-    // 3. Find the "Best Window" (Lowest Wind/Swell Combo)
     function findBestWindow(hourlyData, dayIndex) {
-        // Slice out the 24 hours for this specific day
+        // Safety check
+        if (!hourlyData || !hourlyData.wave_height) return "Daylight Hours";
+
         const start = dayIndex * 24;
-        const end = start + 24;
-        
         let bestHour = -1;
         let minScore = 999;
 
-        // Only check daylight hours (7am - 7pm)
+        // Check daylight hours (7am - 7pm)
         for(let i = start + 7; i < start + 19; i++) {
-            if (!hourlyData.wave_height[i]) continue;
+            // Ensure data exists for this hour
+            if (hourlyData.wave_height[i] === undefined) continue;
             
-            // Simple penalty score: Lower is better
             const swell = hourlyData.wave_height[i];
             const wind = hourlyData.wind_speed[i];
             const score = (swell * 10) + wind; 
 
             if(score < minScore) {
                 minScore = score;
-                bestHour = i % 24; // Convert absolute index to hour of day
+                bestHour = i % 24; 
             }
         }
         
-        // Format as a time range (e.g., "9:00 AM - 12:00 PM")
+        if (bestHour === -1) return "Daylight Hours";
+
         const endHour = bestHour + 3;
         return `${bestHour}:00 - ${endHour}:00`;
     }
 
-    // 4. The Master Scoring Algorithm
+    // --- 4. CORE LOGIC ---
     function analyzeDay(dayData, hourlyData, index) {
-        let score = 10; // Start perfect
+        let score = 10; 
         let warnings = [];
+
+        // Critical Safety Check: Do we have data for this day?
+        if (!dayData.wave_height_max || dayData.wave_height_max[index] === undefined) {
+            return null;
+        }
 
         const swell = dayData.wave_height_max[index];
         const windSpeed = dayData.wind_speed_10m_max[index];
         const windDirDeg = dayData.wind_direction_10m_dominant[index];
         const windDir = getCardinal(windDirDeg);
 
-        // -- Swell Logic --
+        // Penalties
         if (swell > 0.8) score -= 2;
         if (swell > 1.2) score -= 4;
-        if (swell > 1.5) { score -= 10; warnings.push("Dangerous Swell"); } // Kill score
+        if (swell > 1.5) { score -= 10; warnings.push("Dangerous Swell"); } 
 
-        // -- Wind Speed Logic --
         if (windSpeed > 10) score -= 1;
         if (windSpeed > 15) score -= 3;
         if (windSpeed > 20) { score -= 5; warnings.push("High Winds"); }
 
-        // -- Wind Direction Logic (Critical for Goat Island) --
         if (CONFIG.onshoreWinds.includes(windDir)) {
             score -= 3;
-            warnings.push("Onshore Wind (Choppy)");
+            warnings.push("Onshore Wind");
         } else if (CONFIG.offshoreWinds.includes(windDir)) {
-            score += 1; // Bonus for flattening effect
+            score += 1; 
         }
 
-        // Clamp Score 0-10
         score = Math.max(0, Math.min(10, score));
 
-        // Determine UI State
         let state = { text: "GREAT", class: "bg-good" };
         if (score < 7) state = { text: "OKAY", class: "bg-ok" };
         if (score < 4) state = { text: "POOR", class: "bg-bad" };
@@ -260,41 +271,67 @@
         };
     }
 
-    // --- DATA FETCHING ---
+    // --- 5. INITIALIZATION ---
     async function init() {
+        const loadingDiv = document.getElementById('loading');
+        const debugDiv = document.getElementById('debug-area');
+        
+        // Open-Meteo URL (using HTTPS)
         const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${CONFIG.lat}&longitude=${CONFIG.lon}&current=wave_height,wind_wave_height,swell_wave_height&hourly=wave_height,wind_speed_10m&daily=wave_height_max,wind_speed_10m_max,wind_direction_10m_dominant&wind_speed_unit=kn&timezone=${encodeURIComponent(CONFIG.timezone)}`;
 
         try {
             const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`API Status: ${response.status}`);
+            }
+
             const data = await response.json();
+            
+            if (!data.daily) {
+                throw new Error("Weather data missing from API response");
+            }
+
             render(data);
         } catch (e) {
-            document.getElementById('loading').innerText = "Error loading forecast. Please refresh.";
-            console.error(e);
+            loadingDiv.classList.add('hidden');
+            debugDiv.innerHTML = `
+                <div class="error-box">
+                    <strong>⚠️ Data Connection Failed</strong><br/>
+                    ${e.message}<br/>
+                    <small>Try turning off ad-blockers or refreshing.</small>
+                </div>
+            `;
         }
     }
 
-    // --- RENDERING ---
+    // --- 6. RENDER UI ---
     function render(data) {
         const container = document.getElementById('app');
         document.getElementById('loading').classList.add('hidden');
         
         const daily = data.daily;
-        const hourly = data.hourly; // Needed for "Best Window" calculation
+        const hourly = data.hourly; 
+
+        if (daily.time.length === 0) {
+            container.innerHTML = "<p>No forecast data available.</p>";
+            return;
+        }
 
         daily.time.forEach((dateStr, i) => {
             const date = new Date(dateStr);
             const dateDisplay = date.toLocaleDateString('en-NZ', { weekday: 'long', day: 'numeric', month: 'short' });
             
-            // Analyze the data
             const analysis = analyzeDay(daily, hourly, i);
+            
+            // If data is corrupt for one day, skip it rather than crashing
+            if (!analysis) return;
+
             const confidence = getConfidence(i);
 
-            // Create Card HTML
             const card = document.createElement('div');
             card.className = 'card';
             
-            // Conditional Warning HTML
             const warningHTML = analysis.warnings.length > 0 
                 ? `<span class="warning-text">⚠️ ${analysis.warnings[0]}</span>` 
                 : '';
@@ -344,9 +381,8 @@
         });
     }
 
-    // Start
+    // Start App
     init();
-
 </script>
 </body>
 </html>
