@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goat Island Pro</title>
+    <title>Mr. Moritz's Goat Island Thing</title>
     <style>
         :root {
             --bg: #f0f4f8;
@@ -28,19 +28,55 @@
 
         .container { max-width: 600px; margin: 0 auto; }
         
+        /* LOGO & HEADER STYLES */
         header { text-align: center; margin-bottom: 30px; }
-        h1 { margin: 0; color: #2c5282; letter-spacing: -0.5px; }
+        
+        .logo-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px auto;
+        }
+
+        .logo-face {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .snorkel-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+        }
+
+        h1 { margin: 0; color: #2c5282; letter-spacing: -0.5px; font-size: 1.8rem; }
         .subtitle { color: var(--subtext); font-size: 0.9rem; margin-top: 5px; }
 
         /* RELIABILITY BAR */
+        .confidence-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--subtext);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
         .confidence-meter {
             height: 4px;
             background: #e2e8f0;
             border-radius: 2px;
-            margin-top: 10px;
+            margin-top: 6px;
             overflow: hidden;
             width: 100px;
-            margin: 10px auto 0 auto;
         }
         .confidence-fill { height: 100%; transition: width 0.3s ease, background-color 0.3s ease; }
 
@@ -67,7 +103,6 @@
         .date-group h2 { margin: 0; font-size: 1.25rem; }
         .date-group span { font-size: 0.85rem; color: var(--subtext); font-weight: 500; }
 
-        /* SCORE INDICATOR */
         .score-badge {
             font-size: 1.2rem;
             font-weight: 800;
@@ -79,7 +114,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* GRID METRICS */
+        /* METRICS */
         .metrics-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -97,10 +132,15 @@
         .metric-value { font-size: 1.1rem; font-weight: 700; color: var(--text); }
         .metric-sub { font-size: 0.75rem; color: var(--subtext); }
 
-        /* BEST WINDOW SECTION */
-        .best-window {
-            background: #ebf8ff;
-            color: #2b6cb0;
+        /* CROWD & WINDOW SECTIONS */
+        .info-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .info-box {
+            flex: 1;
             padding: 12px;
             border-radius: 8px;
             font-size: 0.9rem;
@@ -108,9 +148,17 @@
             align-items: center;
             gap: 10px;
         }
+
+        .best-window { background: #ebf8ff; color: #2b6cb0; }
+        .crowd-meter { background: #fff5f5; color: #c53030; }
+        
+        .crowd-low { background: #f0fff4; color: #2f855a; }   /* Green */
+        .crowd-med { background: #fffff0; color: #b7791f; }   /* Yellow */
+        .crowd-high { background: #fffaf0; color: #dd6b20; }  /* Orange */
+        .crowd-packed { background: #fff5f5; color: #c53030; } /* Red */
+
         .window-icon { font-size: 1.2rem; }
 
-        /* TIDE BUTTON */
         .tide-btn {
             display: block;
             width: 100%;
@@ -127,26 +175,31 @@
         }
         .tide-btn:hover { background: #f7fafc; }
 
-        /* LOADING & ERROR */
         #loading { text-align: center; padding: 40px; color: var(--subtext); }
         .hidden { display: none; }
         .error-box { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-family: monospace; font-size: 0.9em; }
 
-        /* COLOR UTILITIES */
         .bg-good { background-color: var(--good); }
         .bg-ok { background-color: var(--ok); color: #744210; }
         .bg-bad { background-color: var(--bad); }
         
         .warning-text { color: #e53e3e; font-size: 0.8rem; font-weight: bold; margin-top: 5px; display: block; }
-
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>🤿 Goat Island Pro</h1>
-        <div class="subtitle">7-Day Snorkel Forecaster</div>
+        <div class="logo-container">
+            <!-- UPDATED: Changed to face.png -->
+            <img src="face.png" onerror="this.src='https://placehold.co/120x120?text=Face+Here'" alt="Mr. Moritz" class="logo-face">
+            <svg class="snorkel-overlay" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M25,45 C25,40 35,35 50,35 C65,35 75,40 75,45 C75,55 70,60 50,60 C30,60 25,55 25,45 Z" fill="rgba(0, 150, 255, 0.3)" stroke="#2c5282" stroke-width="2"/>
+                <path d="M75,45 Q85,45 85,30 L85,15" fill="none" stroke="#ecc94b" stroke-width="4" stroke-linecap="round"/>
+                <rect x="82" y="10" width="6" height="5" fill="#e53e3e" />
+            </svg>
+        </div>
+        <h1>Mr. Moritz's<br>Goat Island Thing</h1>
     </header>
 
     <div id="debug-area"></div>
@@ -155,29 +208,39 @@
 </div>
 
 <script>
-    // --- 1. CRASH REPORTER (Debug Tool) ---
-    // This catches any error and prints it to the screen so you can see it on mobile/GitHub
+    // --- 1. CRASH REPORTER ---
     window.onerror = function(message, source, lineno, colno, error) {
         const debug = document.getElementById('debug-area');
-        debug.innerHTML = `
-            <div class="error-box">
-                <strong>⚠️ App Crash Detected:</strong><br/>
-                ${message}<br/>
-                <small>Line: ${lineno}</small>
-            </div>
-        `;
+        debug.innerHTML = `<div class="error-box"><strong>⚠️ App Crash:</strong><br/>${message}<br/><small>Line: ${lineno}</small></div>`;
         document.getElementById('loading').classList.add('hidden');
     };
 
-    // --- 2. CONFIGURATION ---
+    // --- 2. CONFIGURATION & DATES ---
     const CONFIG = {
-        lat: -36.27, // Goat Island Marine Reserve
-        lon: 174.80,
-        timezone: "Pacific/Auckland",
-        onshoreWinds: ['N', 'NE', 'NW'], 
-        offshoreWinds: ['S', 'SW', 'SE'],
-        maxSwell: 1.0, 
+        lat: -36.27, lon: 174.80, timezone: "Pacific/Auckland",
+        onshoreWinds: ['N', 'NE', 'NW'], offshoreWinds: ['S', 'SW', 'SE'], maxSwell: 1.0, 
     };
+
+    // 2026 NZ Public Holidays (Major ones affecting crowds)
+    const PUBLIC_HOLIDAYS_2026 = [
+        "2026-02-06", // Waitangi Day
+        "2026-04-03", // Good Friday
+        "2026-04-06", // Easter Monday
+        "2026-04-25", "2026-04-27", // Anzac
+        "2026-06-01", // King's Birthday
+        "2026-07-10", // Matariki
+        "2026-10-26", // Labour Day
+        "2026-12-25", "2026-12-26" // Xmas
+    ];
+
+    // 2026 School Holiday Blocks (Approximate major blocks)
+    // Format: [Start Date, End Date] inclusive
+    const SCHOOL_HOLIDAYS_2026 = [
+        ["2026-04-03", "2026-04-19"], // Term 1 Break
+        ["2026-07-04", "2026-07-19"], // Term 2 Break
+        ["2026-09-26", "2026-10-11"], // Term 3 Break
+        ["2026-12-19", "2027-02-01"]  // Summer Break
+    ];
 
     // --- 3. HELPER FUNCTIONS ---
     function getCardinal(angle) {
@@ -186,78 +249,106 @@
     }
 
     function getConfidence(daysAway) {
-        const score = Math.max(20, 100 - (daysAway * 12)); 
-        let color = '#48bb78'; 
-        if(score < 75) color = '#ecc94b'; 
-        if(score < 50) color = '#cbd5e0'; 
-        return { score, color };
+        const score = Math.max(10, 100 - (daysAway * 14)); 
+        let color = '#48bb78'; let emoji = '🟢';
+        if(score < 80) { color = '#ecc94b'; emoji = '🟡'; }
+        if(score < 50) { color = '#cbd5e0'; emoji = '🔴'; }
+        return { score, color, emoji };
+    }
+
+    // --- 4. CROWD LOGIC ENGINE ---
+    function calculateCrowdLevel(dateObj, snorkelScore) {
+        const isoDate = dateObj.toISOString().split('T')[0];
+        const dayOfWeek = dateObj.getDay(); // 0=Sun, 6=Sat
+        const month = dateObj.getMonth(); // 0=Jan, 11=Dec
+        
+        let crowdScore = 0;
+
+        // Factor 1: Weekend (Major Impact)
+        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+        if (isWeekend) crowdScore += 3;
+
+        // Factor 2: Seasonality
+        // Peak Summer (Dec, Jan, Feb, Mar)
+        if (month === 11 || month === 0 || month === 1 || month === 2) crowdScore += 2;
+        // Shoulder (Apr, Nov)
+        else if (month === 3 || month === 10) crowdScore += 1;
+        
+        // Factor 3: Public Holidays (Massive Impact)
+        if (PUBLIC_HOLIDAYS_2026.includes(isoDate)) crowdScore += 5;
+
+        // Factor 4: School Holidays (High Impact)
+        let isSchoolHol = false;
+        for (let range of SCHOOL_HOLIDAYS_2026) {
+            if (isoDate >= range[0] && isoDate <= range[1]) {
+                isSchoolHol = true;
+                crowdScore += 2;
+                break;
+            }
+        }
+
+        // Factor 5: Good Weather Multiplier
+        // If it's a perfect snorkeling day, everyone shows up
+        if (snorkelScore >= 7) crowdScore += 2;
+        if (snorkelScore < 4) crowdScore -= 2; // Bad weather clears the beach
+
+        // Determine Label
+        // Max theoretical score: 3(Wknd) + 2(Sum) + 5(PubHol) + 2(SchHol) + 2(Weath) = 14
+        let label = "Quiet";
+        let css = "crowd-low";
+        let icon = "😌";
+
+        if (crowdScore >= 3) { label = "Moderate"; css = "crowd-med"; icon = "🙂"; }
+        if (crowdScore >= 6) { label = "Busy"; css = "crowd-high"; icon = "😓"; }
+        if (crowdScore >= 8) { label = "Packed"; css = "crowd-packed"; icon = "😱"; }
+
+        return { label, css, icon, isHoliday: isSchoolHol || PUBLIC_HOLIDAYS_2026.includes(isoDate) };
     }
 
     function findBestWindow(hourlyData, dayIndex) {
-        // Safety check
-        if (!hourlyData || !hourlyData.wave_height) return "Daylight Hours";
-
+        if (!hourlyData || !hourlyData.wave_height || !hourlyData.wind_speed_10m) return "Daylight Hours";
         const start = dayIndex * 24;
         let bestHour = -1;
         let minScore = 999;
-
-        // Check daylight hours (7am - 7pm)
         for(let i = start + 7; i < start + 19; i++) {
-            // Ensure data exists for this hour
             if (hourlyData.wave_height[i] === undefined) continue;
-            
-            const swell = hourlyData.wave_height[i];
-            const wind = hourlyData.wind_speed[i];
-            const score = (swell * 10) + wind; 
-
-            if(score < minScore) {
-                minScore = score;
-                bestHour = i % 24; 
-            }
+            const score = (hourlyData.wave_height[i] * 10) + hourlyData.wind_speed_10m[i]; 
+            if(score < minScore) { minScore = score; bestHour = i % 24; }
         }
-        
         if (bestHour === -1) return "Daylight Hours";
-
-        const endHour = bestHour + 3;
-        return `${bestHour}:00 - ${endHour}:00`;
+        return `${bestHour}:00 - ${bestHour + 3}:00`;
     }
 
-    // --- 4. CORE LOGIC ---
-    function analyzeDay(dayData, hourlyData, index) {
+    // --- 5. CORE ANALYSIS ---
+    function analyzeDay(dayData, hourlyData, index, dateObj) {
         let score = 10; 
         let warnings = [];
 
-        // Critical Safety Check: Do we have data for this day?
-        if (!dayData.wave_height_max || dayData.wave_height_max[index] === undefined) {
-            return null;
-        }
+        if (!dayData.wave_height_max || dayData.wave_height_max[index] === undefined) return null;
 
         const swell = dayData.wave_height_max[index];
         const windSpeed = dayData.wind_speed_10m_max[index];
         const windDirDeg = dayData.wind_direction_10m_dominant[index];
         const windDir = getCardinal(windDirDeg);
 
-        // Penalties
         if (swell > 0.8) score -= 2;
         if (swell > 1.2) score -= 4;
         if (swell > 1.5) { score -= 10; warnings.push("Dangerous Swell"); } 
-
         if (windSpeed > 10) score -= 1;
         if (windSpeed > 15) score -= 3;
         if (windSpeed > 20) { score -= 5; warnings.push("High Winds"); }
 
-        if (CONFIG.onshoreWinds.includes(windDir)) {
-            score -= 3;
-            warnings.push("Onshore Wind");
-        } else if (CONFIG.offshoreWinds.includes(windDir)) {
-            score += 1; 
-        }
+        if (CONFIG.onshoreWinds.includes(windDir)) { score -= 3; warnings.push("Onshore Wind"); } 
+        else if (CONFIG.offshoreWinds.includes(windDir)) { score += 1; }
 
         score = Math.max(0, Math.min(10, score));
 
         let state = { text: "GREAT", class: "bg-good" };
         if (score < 7) state = { text: "OKAY", class: "bg-ok" };
         if (score < 4) state = { text: "POOR", class: "bg-bad" };
+
+        // Calculate Crowds using the score we just made
+        const crowd = calculateCrowdLevel(dateObj, score);
 
         return {
             score: Math.floor(score),
@@ -267,82 +358,55 @@
             windSpeed: Math.round(windSpeed),
             windDir: windDir,
             warnings: warnings,
-            bestWindow: findBestWindow(hourlyData, index)
+            bestWindow: findBestWindow(hourlyData, index),
+            crowd: crowd
         };
     }
 
-    // --- 5. INITIALIZATION ---
+    // --- 6. INIT & RENDER ---
     async function init() {
         const loadingDiv = document.getElementById('loading');
-        const debugDiv = document.getElementById('debug-area');
-        
-        // Open-Meteo URL (using HTTPS)
         const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${CONFIG.lat}&longitude=${CONFIG.lon}&current=wave_height,wind_wave_height,swell_wave_height&hourly=wave_height,wind_speed_10m&daily=wave_height_max,wind_speed_10m_max,wind_direction_10m_dominant&wind_speed_unit=kn&timezone=${encodeURIComponent(CONFIG.timezone)}`;
 
         try {
             const response = await fetch(url);
-            
-            if (!response.ok) {
-                throw new Error(`API Status: ${response.status}`);
-            }
-
+            if (!response.ok) throw new Error(`API Status: ${response.status}`);
             const data = await response.json();
-            
-            if (!data.daily) {
-                throw new Error("Weather data missing from API response");
-            }
-
+            if (!data.daily) throw new Error("Weather data missing");
             render(data);
         } catch (e) {
             loadingDiv.classList.add('hidden');
-            debugDiv.innerHTML = `
-                <div class="error-box">
-                    <strong>⚠️ Data Connection Failed</strong><br/>
-                    ${e.message}<br/>
-                    <small>Try turning off ad-blockers or refreshing.</small>
-                </div>
-            `;
+            document.getElementById('debug-area').innerHTML = `<div class="error-box"><strong>⚠️ Data Connection Failed</strong><br/>${e.message}</div>`;
         }
     }
 
-    // --- 6. RENDER UI ---
     function render(data) {
         const container = document.getElementById('app');
         document.getElementById('loading').classList.add('hidden');
         
-        const daily = data.daily;
-        const hourly = data.hourly; 
+        if (data.daily.time.length === 0) { container.innerHTML = "<p>No forecast data available.</p>"; return; }
 
-        if (daily.time.length === 0) {
-            container.innerHTML = "<p>No forecast data available.</p>";
-            return;
-        }
-
-        daily.time.forEach((dateStr, i) => {
+        data.daily.time.forEach((dateStr, i) => {
             const date = new Date(dateStr);
             const dateDisplay = date.toLocaleDateString('en-NZ', { weekday: 'long', day: 'numeric', month: 'short' });
             
-            const analysis = analyzeDay(daily, hourly, i);
-            
-            // If data is corrupt for one day, skip it rather than crashing
+            const analysis = analyzeDay(data.daily, data.hourly, i, date);
             if (!analysis) return;
-
             const confidence = getConfidence(i);
 
             const card = document.createElement('div');
             card.className = 'card';
-            
-            const warningHTML = analysis.warnings.length > 0 
-                ? `<span class="warning-text">⚠️ ${analysis.warnings[0]}</span>` 
-                : '';
+            const warningHTML = analysis.warnings.length > 0 ? `<span class="warning-text">⚠️ ${analysis.warnings[0]}</span>` : '';
+
+            // Holiday Badge if applicable
+            const holidayBadge = analysis.crowd.isHoliday ? `<span style="font-size:0.7em; background:#bee3f8; color:#2c5282; padding:2px 6px; border-radius:4px; margin-left:5px;">Holiday</span>` : '';
 
             card.innerHTML = `
                 <div class="card-header">
                     <div class="date-group">
-                        <h2>${dateDisplay}</h2>
-                        <div class="confidence-meter" title="Forecast Confidence">
-                            <div class="confidence-fill" style="width: ${confidence.score}%; background: ${confidence.color}"></div>
-                        </div>
+                        <h2>${dateDisplay} ${holidayBadge}</h2>
+                        <div class="confidence-label"><span>${confidence.emoji}</span> ${confidence.score}% Reliable</div>
+                        <div class="confidence-meter"><div class="confidence-fill" style="width: ${confidence.score}%; background: ${confidence.color}"></div></div>
                     </div>
                     <div class="score-badge ${analysis.cssClass}">
                         ${analysis.score}/10
@@ -352,7 +416,7 @@
 
                 <div class="metrics-grid">
                     <div class="metric">
-                        <span class="metric-label">Swell Height</span>
+                        <span class="metric-label">Swell</span>
                         <div class="metric-value">${analysis.swell}m</div>
                         <div class="metric-sub">Target: &lt;1.0m</div>
                     </div>
@@ -364,24 +428,29 @@
                     </div>
                 </div>
 
-                <div class="best-window">
-                    <span class="window-icon">🕒</span>
-                    <div>
-                        <strong>Best Window:</strong> ${analysis.bestWindow}<br>
-                        <span style="font-size:0.8em; opacity:0.8">Calculated for lowest wind/swell</span>
+                <div class="info-row">
+                    <div class="info-box crowd-meter ${analysis.crowd.css}">
+                        <span class="window-icon">${analysis.crowd.icon}</span>
+                        <div>
+                            <strong>Crowds: ${analysis.crowd.label}</strong><br>
+                            <span style="font-size:0.8em; opacity:0.8">Est. Traffic</span>
+                        </div>
+                    </div>
+                    <div class="info-box best-window">
+                        <span class="window-icon">🕒</span>
+                        <div>
+                            <strong>Best Time:</strong><br>
+                            <span style="font-size:0.9em;">${analysis.bestWindow}</span>
+                        </div>
                     </div>
                 </div>
 
-                <a href="https://www.metservice.com/marine/recreational/locations/leigh-marine-reserve" target="_blank" class="tide-btn">
-                    🌊 Check Tides (MetService)
-                </a>
+                <a href="https://www.metservice.com/marine/recreational/locations/leigh-marine-reserve" target="_blank" class="tide-btn">🌊 Check Tides (MetService)</a>
             `;
-
             container.appendChild(card);
         });
     }
 
-    // Start App
     init();
 </script>
 </body>
