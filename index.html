@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mr. Moritz's Goat Island Thing</title>
+    <!-- Added Favicon -->
+    <link rel="icon" type="image/png" href="face.png">
     <style>
         :root {
             --bg: #f0f4f8;
@@ -33,7 +35,7 @@
         
         .logo-container {
             position: relative;
-            width: 140px; /* Made slightly larger */
+            width: 140px; 
             height: 140px;
             margin: 0 auto 15px auto;
             background: white; /* White background for the sticker look */
@@ -47,9 +49,10 @@
         }
 
         .logo-face {
-            width: 85%; /* Shrink face to 85% of container so it fits comfortably */
-            height: 85%;
-            object-fit: contain; /* Ensure full face shows */
+            width: 95%; /* Increased size to fill circle better */
+            height: 95%;
+            object-fit: contain; 
+            transform: translateY(2px); /* Slight nudge down to center eyes */
         }
 
         .snorkel-overlay {
@@ -199,12 +202,12 @@
         <div class="logo-container">
             <img src="face.png" onerror="this.src='https://placehold.co/120x120?text=Face+Here'" alt="Mr. Moritz" class="logo-face">
             <svg class="snorkel-overlay" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <!-- Mask Lens - Adjusted for 85% face size -->
-                <path d="M15,42 C15,27 35,19 50,19 C65,19 85,27 85,42 C85,57 70,65 50,65 C30,65 15,57 15,42 Z" 
+                <!-- Mask Lens - Widened and moved down to fit eyes -->
+                <path d="M12,50 C12,32 35,28 50,28 C65,28 88,32 88,50 C88,68 70,75 50,75 C30,75 12,68 12,50 Z" 
                       fill="rgba(0, 150, 255, 0.4)" stroke="#2c5282" stroke-width="3"/>
-                <!-- Snorkel Tube -->
-                <path d="M85,42 Q95,42 95,17 L95,2" fill="none" stroke="#ecc94b" stroke-width="5" stroke-linecap="round"/>
-                <rect x="92" y="0" width="6" height="6" fill="#e53e3e" />
+                <!-- Snorkel Tube - Adjusted to match new mask position -->
+                <path d="M88,50 Q96,50 96,25 L96,5" fill="none" stroke="#ecc94b" stroke-width="5" stroke-linecap="round"/>
+                <rect x="93" y="0" width="6" height="6" fill="#e53e3e" />
             </svg>
         </div>
         <h1>Mr. Moritz's<br>Goat Island Thing</h1>
